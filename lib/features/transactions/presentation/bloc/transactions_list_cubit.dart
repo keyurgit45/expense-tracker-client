@@ -1,14 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../categories/domain/entities/category.dart';
+import '../../../categories/domain/services/category_service.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/entities/transaction.dart';
 import 'transactions_list_state.dart';
 
 class TransactionsListCubit extends Cubit<TransactionsListState> {
   final TransactionRepository _transactionRepository;
+  final CategoryService _categoryService;
 
-  TransactionsListCubit(this._transactionRepository) : super(TransactionsListInitial());
+  TransactionsListCubit(this._transactionRepository, this._categoryService) : super(TransactionsListInitial());
 
   Future<void> loadTransactions() async {
     emit(TransactionsListLoading());
@@ -27,15 +29,14 @@ class TransactionsListCubit extends Cubit<TransactionsListState> {
 
     final transactions = transactionsResult.getOrElse(() => []);
     
-    // Mock categories for now
-    final categories = [
-      const Category(id: '1', name: 'Shopping'),
-      const Category(id: '2', name: 'Food'),
-      const Category(id: '3', name: 'Transport'),
-      const Category(id: '4', name: 'Entertainment'),
-      const Category(id: '5', name: 'Health'),
-      const Category(id: '6', name: 'Others'),
-    ];
+    // Get categories from the service
+    List<Category> categories;
+    try {
+      categories = await _categoryService.getCategories();
+    } catch (e) {
+      emit(TransactionsListError(message: 'Failed to load categories: $e'));
+      return;
+    }
 
     emit(TransactionsListLoaded(
       transactions: transactions,

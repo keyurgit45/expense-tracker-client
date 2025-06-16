@@ -15,7 +15,7 @@ class TransactionsListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => TransactionsListCubit(getIt())..loadTransactions(),
+      create: (_) => getIt<TransactionsListCubit>()..loadTransactions(),
       child: const TransactionsListView(),
     );
   }

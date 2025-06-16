@@ -113,49 +113,30 @@ flutter run
 
 ## Design System
 
-### Monochromatic Color Palette
-The app uses a premium monochromatic design language with carefully chosen shades:
+**See [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) for comprehensive design documentation.**
 
-- **Background Colors**:
-  - Primary: #0A0A0A (Near black)
-  - Secondary: #141414 (Cards)
-  - Tertiary: #1F1F1F (Elevated surfaces)
-  - Quaternary: #2A2A2A (Hover states)
+### Quick Reference
+- **Design Philosophy**: Premium monochromatic aesthetic inspired by modern banking apps
+- **Color Palette**: Carefully chosen grayscale values (#0A0A0A to #E5E5E5)
+- **Typography**: Inter for UI, Roboto Mono for numbers with tabular figures
+- **Layout**: Fixed-width elements for perfect alignment, 72px minimum height for list items
+- **Spacing**: 20px horizontal padding, consistent vertical rhythm
 
-- **Text Colors**:
-  - Primary: #E5E5E5 (High emphasis)
-  - Secondary: #999999 (Medium emphasis)
-  - Tertiary: #666666 (Low emphasis)
-  - Quaternary: #4D4D4D (Very low emphasis)
+### Key UI Patterns
+1. **Transaction Lists**: 
+   - Minimal design with fixed 100px category width
+   - Clear credit/debit indicators (IN/OUT badges)
+   - Subtle dividers between date sections
+   
+2. **Home Screen**:
+   - Personalized greetings that change based on time/context
+   - Current month transactions only
+   - Top 3 categories based on usage
 
-- **Border Colors**:
-  - Subtle: #1F1F1F (Barely visible)
-  - Default: #2A2A2A (Default borders)
-  - Strong: #3A3A3A (Emphasized borders)
-
-### Typography
-- Uses Google Fonts Inter throughout
-- Roboto Mono for account numbers
-- Font weights: 300-700 for hierarchy
-- No pure black/white for reduced eye strain
-
-### UI Components
-
-1. **Home Screen**:
-   - Balance card with total balance display
-   - Income/Expense summary card
-   - Top 3 categories as buttons
-   - List of 30 latest transactions with date headers
-
-2. **Transactions List**:
-   - Three filter rows: Type (Credit/Debit), Category, Recurring status
-   - Transactions grouped by date with headers
-   - Monochrome filter chips with selection states
-
-3. **Visual Indicators**:
-   - Income: Brighter text (#E5E5E5)
-   - Expense: Dimmer text (#999999)
-   - Tags use different surface colors for subtle differentiation
+3. **Visual Language**:
+   - Progressive disclosure (show essential info first)
+   - Subtle interactions (no decorative animations)
+   - Optimized for debit-heavy transaction lists
 
 ## Key Development Notes
 
@@ -175,8 +156,29 @@ The app uses a premium monochromatic design language with carefully chosen shade
 
 ## Recent Updates
 
-1. **Increased transaction limit**: Home screen now shows 30 transactions instead of 5
-2. **Transaction list page**: Added with comprehensive filtering (type, category, recurring)
-3. **Date headers**: Transactions grouped by date with "Today", "Yesterday", day names, or full dates
-4. **Monochromatic redesign**: Removed all colors in favor of premium black/white design
-5. **Filter improvements**: Category filter state now updates correctly with nullable handling
+1. **Category System**: 
+   - Categories now properly loaded from Supabase with joins
+   - Category service with caching for optimal performance
+   - Categories preloaded at app startup
+
+2. **Transaction List Redesign**:
+   - New minimal design with perfect vertical alignment
+   - Fixed-width categories (100px) to prevent UI shifting
+   - Clear credit/debit indicators with IN/OUT badges
+   - Removed variable-width tags in favor of consistent layout
+
+3. **Homepage Improvements**:
+   - Shows current month transactions only
+   - Personalized greetings (replaces account number)
+   - Dynamic greeting messages based on time/context
+   - "This month" label instead of "Latest"
+
+4. **Performance Optimizations**:
+   - Stream watching uses cached categories (no DB calls)
+   - Synchronous operations for better performance
+   - Reduced database queries through smart caching
+
+5. **Design System Documentation**:
+   - Comprehensive design language documented in DESIGN_SYSTEM.md
+   - Clear guidelines for maintaining UI consistency
+   - Typography, spacing, and color specifications

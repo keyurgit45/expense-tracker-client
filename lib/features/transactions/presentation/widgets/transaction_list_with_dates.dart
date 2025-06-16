@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/color_constants.dart';
 import '../../domain/entities/transaction.dart';
-import 'transaction_item.dart';
+import 'transaction_item_minimal.dart';
 
 class TransactionListWithDates extends StatelessWidget {
   final List<Transaction> transactions;
@@ -35,33 +35,40 @@ class TransactionListWithDates extends StatelessWidget {
       // Add date header if date changed
       if (currentDate != lastDate) {
         if (widgets.isNotEmpty) {
+          widgets.add(const SizedBox(height: 24));
+          widgets.add(Container(
+            height: 1,
+            color: ColorConstants.borderSubtle,
+          ));
           widgets.add(const SizedBox(height: 16));
         }
         widgets.add(_buildDateHeader(currentDate));
-        widgets.add(const SizedBox(height: 12));
+        widgets.add(const SizedBox(height: 8));
         lastDate = currentDate;
       }
 
-      widgets.add(TransactionItem(
+      widgets.add(TransactionItemMinimal(
         transaction: transaction,
         onTap: () => onTap(transaction),
       ));
 
-      if (i < transactions.length - 1) {
-        widgets.add(const SizedBox(height: 8));
-      }
+      // Remove spacing between items for cleaner look
     }
 
     return widgets;
   }
 
   Widget _buildDateHeader(String date) {
-    return Text(
-      date,
-      style: GoogleFonts.inter(
-        color: ColorConstants.textTertiary,
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Text(
+        date,
+        style: GoogleFonts.inter(
+          color: ColorConstants.textTertiary,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }
@@ -96,7 +103,7 @@ class TransactionListWithDatesLoading extends StatelessWidget {
         const SizedBox(height: 12),
         ...List.generate(5, (index) => Column(
           children: [
-            TransactionItem.loading(),
+            TransactionItemMinimal.loading(),
             if (index < 4) const SizedBox(height: 8),
           ],
         )),
@@ -105,7 +112,7 @@ class TransactionListWithDatesLoading extends StatelessWidget {
         const SizedBox(height: 12),
         ...List.generate(5, (index) => Column(
           children: [
-            TransactionItem.loading(),
+            TransactionItemMinimal.loading(),
             if (index < 4) const SizedBox(height: 8),
           ],
         )),

@@ -8,6 +8,7 @@ import '../bloc/home_cubit.dart';
 import '../bloc/home_state.dart';
 import '../../../../core/constants/color_constants.dart';
 import '../widgets/balance_card.dart';
+import '../widgets/greeting_widget.dart';
 import '../widgets/income_expense_card.dart';
 import '../widgets/transaction_list_with_dates.dart';
 
@@ -35,52 +36,57 @@ class _HomePageState extends State<HomePage> {
           onRefresh: () => context.read<HomeCubit>().loadHomeData(),
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  BlocBuilder<HomeCubit, HomeState>(
-                    builder: (context, state) {
-                      if (state is HomeLoaded) {
-                        return BalanceCard(
-                          balance: state.accountSummary.totalBalance,
-                          accountNumber: state.accountSummary.accountNumber,
-                        );
-                      }
-                      return const BalanceCard(
-                        balance: 0,
-                        accountNumber: '',
-                        isLoading: true,
-                      );
-                    },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 24),
+                      const GreetingWidget(),
+                      const SizedBox(height: 32),
+                      BlocBuilder<HomeCubit, HomeState>(
+                        builder: (context, state) {
+                          if (state is HomeLoaded) {
+                            return BalanceCard(
+                              balance: state.accountSummary.totalBalance,
+                            );
+                          }
+                          return const BalanceCard(
+                            balance: 0,
+                            isLoading: true,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      BlocBuilder<HomeCubit, HomeState>(
+                        builder: (context, state) {
+                          if (state is HomeLoaded) {
+                            return IncomeExpenseCard(
+                              income: state.accountSummary.totalIncome,
+                              expense: state.accountSummary.totalExpense,
+                              incomeChangePercent: state.accountSummary.incomeChangePercentage,
+                              expenseChangePercent: state.accountSummary.expenseChangePercentage,
+                            );
+                          }
+                          return const IncomeExpenseCard(
+                            income: 0,
+                            expense: 0,
+                            incomeChangePercent: 0,
+                            expenseChangePercent: 0,
+                            isLoading: true,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 32),
+                    ],
                   ),
-                  const SizedBox(height: 24),
-                  BlocBuilder<HomeCubit, HomeState>(
-                    builder: (context, state) {
-                      if (state is HomeLoaded) {
-                        return IncomeExpenseCard(
-                          income: state.accountSummary.totalIncome,
-                          expense: state.accountSummary.totalExpense,
-                          incomeChangePercent: state.accountSummary.incomeChangePercentage,
-                          expenseChangePercent: state.accountSummary.expenseChangePercentage,
-                        );
-                      }
-                      return const IncomeExpenseCard(
-                        income: 0,
-                        expense: 0,
-                        incomeChangePercent: 0,
-                        expenseChangePercent: 0,
-                        isLoading: true,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 32),
-                  _buildTransactionsSection(),
-                  const SizedBox(height: 20),
-                ],
-              ),
+                ),
+                _buildTransactionsSection(),
+                const SizedBox(height: 20),
+              ],
             ),
           ),
         ),
@@ -92,41 +98,44 @@ class _HomePageState extends State<HomePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Latest',
-                  style: GoogleFonts.inter(
-                    color: ColorConstants.textTertiary,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'This month',
+                    style: GoogleFonts.inter(
+                      color: ColorConstants.textTertiary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Transactions',
-                  style: GoogleFonts.inter(
-                    color: ColorConstants.textPrimary,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(height: 4),
+                  Text(
+                    'Transactions',
+                    style: GoogleFonts.inter(
+                      color: ColorConstants.textPrimary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            IconButton(
-              onPressed: () {
-                context.push(AppRouter.transactions);
-              },
-              icon: const Icon(
-                Icons.chevron_right,
-                color: ColorConstants.textPrimary,
+                ],
               ),
-            ),
-          ],
+              IconButton(
+                onPressed: () {
+                  context.push(AppRouter.transactions);
+                },
+                icon: const Icon(
+                  Icons.chevron_right,
+                  color: ColorConstants.textPrimary,
+                ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 16),
         BlocBuilder<HomeCubit, HomeState>(

@@ -6,6 +6,7 @@ import 'config/injection.dart';
 import 'config/routes/app_router.dart';
 import 'config/supabase_config.dart';
 import 'config/theme/app_theme.dart';
+import 'features/categories/domain/services/category_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,14 @@ void main() async {
 
   // Configure dependencies
   await configureDependencies();
+
+  // Preload categories for optimized performance
+  try {
+    final categoryService = getIt<CategoryService>();
+    await categoryService.preloadCategories();
+  } catch (e) {
+    debugPrint('Error preloading categories: $e');
+  }
 
   runApp(const ExpenseTrackerApp());
 }

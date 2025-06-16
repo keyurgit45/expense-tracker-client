@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/errors/exceptions.dart';
+import '../../../categories/domain/services/category_service.dart';
 import '../models/account_summary_model.dart';
 import '../models/transaction_model.dart';
 
@@ -22,15 +23,16 @@ abstract class TransactionRemoteDataSource {
 
 class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
   final SupabaseClient _supabaseClient;
+  final CategoryService _categoryService;
 
-  TransactionRemoteDataSourceImpl(this._supabaseClient);
+  TransactionRemoteDataSourceImpl(this._supabaseClient, this._categoryService);
 
   @override
   Future<List<TransactionModel>> getLatestTransactions({int limit = 10}) async {
     try {
       final response = await _supabaseClient
           .from('transactions')
-          .select()
+          .select('*, categories(name)')
           .order('date', ascending: false)
           .limit(limit);
 
@@ -51,7 +53,7 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
   }) async {
     try {
       // Build the query dynamically
-      final queryBuilder = _supabaseClient.from('transactions').select();
+      final queryBuilder = _supabaseClient.from('transactions').select('*, categories(name)');
       dynamic query = queryBuilder;
 
       if (startDate != null) {
@@ -87,7 +89,7 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
     try {
       final response = await _supabaseClient
           .from('transactions')
-          .select()
+          .select('*, categories(name)')
           .eq('transaction_id', id)
           .single();
 
@@ -171,7 +173,7 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
       final response = await _supabaseClient
           .from('transactions')
           .insert(transaction.toJson())
-          .select()
+          .select('*, categories(name)')
           .single();
 
       return TransactionModel.fromJson(response);
@@ -187,7 +189,7 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
           .from('transactions')
           .update(transaction.toJson())
           .eq('transaction_id', transaction.id)
-          .select()
+          .select('*, categories(name)')
           .single();
 
       return TransactionModel.fromJson(response);
@@ -215,6 +217,15 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
         .stream(primaryKey: ['transaction_id'])
         .order('date', ascending: false)
         .limit(limit)
-        .map((data) => data.map((json) => TransactionModel.fromJson(json)).toList());
+        .map((data) {
+          // Use cached categories instead of making DB calls
+          return data.map((transaction) {
+            if (transaction['category_id'] != null) {
+              final categoryName = _categoryService.getCategoryName(transaction['category_id']);
+              transaction['categories'] = {'name': categoryName};
+            }
+            return TransactionModel.fromJson(transaction);
+          }).toList();
+        });
   }
 }

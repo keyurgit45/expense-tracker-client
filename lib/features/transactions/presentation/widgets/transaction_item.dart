@@ -56,7 +56,7 @@ class TransactionItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: [
-            _buildTag(transaction.tag),
+            _buildCategory(transaction.categoryName),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -86,17 +86,18 @@ class TransactionItem extends StatelessWidget {
     );
   }
 
-  Widget _buildTag(TransactionTag tag) {
-    final tagConfig = _getTagConfig(tag);
+  Widget _buildCategory(String? categoryName) {
+    final name = categoryName ?? 'Other';
+    final color = _getCategoryColor(name);
     
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: tagConfig.color,
+        color: color,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        tagConfig.text,
+        name.toUpperCase(),
         style: GoogleFonts.inter(
           color: ColorConstants.textSecondary,
           fontSize: 12,
@@ -106,23 +107,15 @@ class TransactionItem extends StatelessWidget {
     );
   }
 
-  _TagConfig _getTagConfig(TransactionTag tag) {
-    switch (tag) {
-      case TransactionTag.fee:
-        return _TagConfig('FEE', ColorConstants.surface2);
-      case TransactionTag.sale:
-        return _TagConfig('SALE', ColorConstants.surface3);
-      case TransactionTag.refund:
-        return _TagConfig('REFUND', ColorConstants.surface1);
-      case TransactionTag.other:
-        return _TagConfig('OTHER', ColorConstants.surface2);
-    }
+  Color _getCategoryColor(String categoryName) {
+    // Use different surface colors based on category name hash
+    final hash = categoryName.hashCode;
+    final colors = [
+      ColorConstants.surface1,
+      ColorConstants.surface2,
+      ColorConstants.surface3,
+      ColorConstants.bgQuaternary,
+    ];
+    return colors[hash.abs() % colors.length];
   }
-}
-
-class _TagConfig {
-  final String text;
-  final Color color;
-
-  _TagConfig(this.text, this.color);
 }

@@ -6,6 +6,7 @@ class TransactionModel {
   final double amount;
   final DateTime date;
   final String? categoryId;
+  final String? categoryName;
   final String? notes;
   final bool isRecurring;
 
@@ -15,6 +16,7 @@ class TransactionModel {
     required this.amount,
     required this.date,
     this.categoryId,
+    this.categoryName,
     this.notes,
     this.isRecurring = false,
   });
@@ -26,6 +28,7 @@ class TransactionModel {
       amount: (json['amount'] as num).toDouble(),
       date: DateTime.parse(json['date'] as String),
       categoryId: json['category_id'] as String?,
+      categoryName: json['categories'] != null ? json['categories']['name'] as String? : null,
       notes: json['notes'] as String?,
       isRecurring: json['is_recurring'] as bool? ?? false,
     );
@@ -58,7 +61,7 @@ class TransactionModel {
       tag: tag,
       date: date,
       categoryId: categoryId,
-      categoryName: null, // Will be populated when joined with categories
+      categoryName: categoryName,
       notes: notes,
       isRecurring: isRecurring,
     );
@@ -76,6 +79,7 @@ class TransactionModel {
       amount: amount,
       date: entity.date,
       categoryId: entity.categoryId,
+      categoryName: entity.categoryName,
       notes: entity.notes,
       isRecurring: entity.isRecurring,
     );

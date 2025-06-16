@@ -1,6 +1,10 @@
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../features/categories/data/datasources/category_remote_data_source.dart';
+import '../features/categories/data/repositories/category_repository_impl.dart';
+import '../features/categories/domain/repositories/category_repository.dart';
+import '../features/categories/domain/services/category_service.dart';
 import '../features/transactions/data/datasources/transaction_remote_data_source.dart';
 import '../features/transactions/data/repositories/transaction_repository_impl.dart';
 import '../features/transactions/domain/repositories/transaction_repository.dart';
@@ -16,8 +20,17 @@ Future<void> configureDependencies() async {
   );
 
   // Data sources
+  getIt.registerLazySingleton<CategoryRemoteDataSource>(
+    () => CategoryRemoteDataSourceImpl(getIt()),
+  );
+
+  // Services (registered before TransactionRemoteDataSource which depends on it)
+  getIt.registerLazySingleton<CategoryService>(
+    () => CategoryService(getIt<CategoryRepository>()),
+  );
+  
   getIt.registerLazySingleton<TransactionRemoteDataSource>(
-    () => TransactionRemoteDataSourceImpl(getIt()),
+    () => TransactionRemoteDataSourceImpl(getIt(), getIt<CategoryService>()),
   );
 
   // Repositories
@@ -26,12 +39,15 @@ Future<void> configureDependencies() async {
       remoteDataSource: getIt(),
     ),
   );
+  getIt.registerLazySingleton<CategoryRepository>(
+    () => CategoryRepositoryImpl(getIt()),
+  );
 
   // Blocs/Cubits
   getIt.registerFactory(
-    () => HomeCubit(getIt()),
+    () => HomeCubit(getIt(), getIt<CategoryService>()),
   );
   getIt.registerFactory(
-    () => TransactionsListCubit(getIt()),
+    () => TransactionsListCubit(getIt(), getIt<CategoryService>()),
   );
 }
