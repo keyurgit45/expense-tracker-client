@@ -11,17 +11,11 @@ This is an expense tracker Flutter application with advanced ML-powered transact
 ### Development
 ```bash
 flutter run                    # Run the app on connected device/emulator
-flutter run -d chrome         # Run on Chrome web browser
-flutter run -d macos          # Run on macOS desktop
 ```
 
 ### Build
 ```bash
 flutter build apk             # Build Android APK
-flutter build ios             # Build iOS app
-flutter build web             # Build web app
-flutter build macos           # Build macOS app
-flutter build windows         # Build Windows app
 ```
 
 ### Testing & Quality

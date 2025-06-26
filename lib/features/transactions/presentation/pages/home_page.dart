@@ -7,6 +7,7 @@ import '../../../../config/routes/app_router.dart';
 import '../bloc/home_cubit.dart';
 import '../bloc/home_state.dart';
 import '../../../../core/constants/color_constants.dart';
+import '../../../../core/widgets/expandable_fab.dart';
 import '../widgets/balance_card.dart';
 import '../widgets/greeting_widget.dart';
 import '../widgets/income_expense_card.dart';
@@ -31,65 +32,79 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstants.bgPrimary,
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () => context.read<HomeCubit>().loadHomeData(),
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 24),
-                      const GreetingWidget(),
-                      const SizedBox(height: 32),
-                      BlocBuilder<HomeCubit, HomeState>(
-                        builder: (context, state) {
-                          if (state is HomeLoaded) {
-                            return BalanceCard(
-                              balance: state.accountSummary.totalBalance,
-                            );
-                          }
-                          return const BalanceCard(
-                            balance: 0,
-                            isLoading: true,
-                          );
-                        },
+      body: Stack(
+        children: [
+          SafeArea(
+            child: RefreshIndicator(
+              onRefresh: () => context.read<HomeCubit>().loadHomeData(),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 24),
+                          const GreetingWidget(),
+                          const SizedBox(height: 32),
+                          BlocBuilder<HomeCubit, HomeState>(
+                            builder: (context, state) {
+                              if (state is HomeLoaded) {
+                                return BalanceCard(
+                                  balance: state.accountSummary.totalBalance,
+                                );
+                              }
+                              return const BalanceCard(
+                                balance: 0,
+                                isLoading: true,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 24),
+                          BlocBuilder<HomeCubit, HomeState>(
+                            builder: (context, state) {
+                              if (state is HomeLoaded) {
+                                return IncomeExpenseCard(
+                                  income: state.accountSummary.totalIncome,
+                                  expense: state.accountSummary.totalExpense,
+                                  incomeChangePercent: state
+                                      .accountSummary.incomeChangePercentage,
+                                  expenseChangePercent: state
+                                      .accountSummary.expenseChangePercentage,
+                                );
+                              }
+                              return const IncomeExpenseCard(
+                                income: 0,
+                                expense: 0,
+                                incomeChangePercent: 0,
+                                expenseChangePercent: 0,
+                                isLoading: true,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 32),
+                        ],
                       ),
-                      const SizedBox(height: 24),
-                      BlocBuilder<HomeCubit, HomeState>(
-                        builder: (context, state) {
-                          if (state is HomeLoaded) {
-                            return IncomeExpenseCard(
-                              income: state.accountSummary.totalIncome,
-                              expense: state.accountSummary.totalExpense,
-                              incomeChangePercent: state.accountSummary.incomeChangePercentage,
-                              expenseChangePercent: state.accountSummary.expenseChangePercentage,
-                            );
-                          }
-                          return const IncomeExpenseCard(
-                            income: 0,
-                            expense: 0,
-                            incomeChangePercent: 0,
-                            expenseChangePercent: 0,
-                            isLoading: true,
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 32),
-                    ],
-                  ),
+                    ),
+                    _buildTransactionsSection(),
+                    const SizedBox(height: 20),
+                  ],
                 ),
-                _buildTransactionsSection(),
-                const SizedBox(height: 20),
-              ],
+              ),
             ),
           ),
-        ),
+          const Positioned(
+            bottom: 45,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: ExpandableFab(),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -165,11 +180,12 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               }
-              
+
               // Calculate height based on available space
               final screenHeight = MediaQuery.of(context).size.height;
-              final availableHeight = screenHeight - 400; // Approximate space taken by other widgets
-              
+              final availableHeight = screenHeight -
+                  400; // Approximate space taken by other widgets
+
               return SizedBox(
                 height: availableHeight.clamp(400, 800), // Min 400, max 800
                 child: SingleChildScrollView(
@@ -183,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               );
             }
-            
+
             if (state is HomeError) {
               return Center(
                 child: Padding(
@@ -209,7 +225,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               );
             }
-            
+
             return const TransactionListWithDatesLoading();
           },
         ),

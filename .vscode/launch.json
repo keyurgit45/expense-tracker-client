@@ -4,20 +4,19 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-    
         {
-            "name": "expense_tracker_client",
+            "name": "Debug Mode",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "expense_tracker_client (profile mode)",
+            "name": "Profile Mode",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "expense_tracker_client (release mode)",
+            "name": "Release Mode",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

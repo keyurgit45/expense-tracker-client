@@ -69,7 +69,7 @@ class AppTheme {
       scaffoldBackgroundColor: ColorConstants.bgPrimary,
       brightness: Brightness.dark,
       textTheme: GoogleFonts.interTextTheme(
-        TextTheme(
+        const TextTheme(
           displayLarge: TextStyle(color: ColorConstants.textPrimary),
           displayMedium: TextStyle(color: ColorConstants.textPrimary),
           displaySmall: TextStyle(color: ColorConstants.textPrimary),
@@ -112,7 +112,7 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: ColorConstants.textPrimary,
-          side: BorderSide(color: ColorConstants.borderDefault),
+          side: const BorderSide(color: ColorConstants.borderDefault),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
@@ -130,36 +130,36 @@ class AppTheme {
         fillColor: ColorConstants.surface1,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: ColorConstants.borderDefault),
+          borderSide: const BorderSide(color: ColorConstants.borderDefault),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: ColorConstants.borderSubtle),
+          borderSide: const BorderSide(color: ColorConstants.borderSubtle),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: ColorConstants.borderStrong, width: 1),
+          borderSide: const BorderSide(color: ColorConstants.borderStrong, width: 1),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: ColorConstants.textTertiary, width: 1),
+          borderSide: const BorderSide(color: ColorConstants.textTertiary, width: 1),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        hintStyle: TextStyle(color: ColorConstants.textQuaternary),
-        labelStyle: TextStyle(color: ColorConstants.textTertiary),
+        hintStyle: const TextStyle(color: ColorConstants.textQuaternary),
+        labelStyle: const TextStyle(color: ColorConstants.textTertiary),
       ),
       cardTheme: CardTheme(
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: ColorConstants.borderSubtle),
+          side: const BorderSide(color: ColorConstants.borderSubtle),
         ),
         color: ColorConstants.surface1,
       ),
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         color: ColorConstants.textSecondary,
       ),
-      dividerTheme: DividerThemeData(
+      dividerTheme: const DividerThemeData(
         color: ColorConstants.borderSubtle,
         thickness: 1,
       ),
