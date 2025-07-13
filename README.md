@@ -1,6 +1,6 @@
 # Expense Tracker
 
-A premium expense tracking application built with Flutter, featuring a sophisticated monochromatic design and intelligent transaction categorization.
+A premium expense tracking application built with Flutter, featuring a sophisticated monochromatic design and intelligent transaction categorisation.
 
 ## Introduction
 
@@ -11,23 +11,23 @@ Expense Tracker is a modern financial management app that helps users track thei
 This expense tracker goes beyond simple transaction logging. It features:
 
 - **Clean Architecture**: Following domain-driven design principles for maintainability and scalability
-- **Premium Monochromatic UI**: A carefully crafted dark theme using only shades of gray for a sophisticated, distraction-free experience
-- **Intelligent Categorization**: ML-ready infrastructure with pgvector support for automatic transaction categorization
+- **Premium Monochromatic UI**: A carefully crafted dark theme using only shades of grey for a sophisticated, distraction-free experience
+- **Intelligent Categorisation**: ML-ready infrastructure with pgvector support for automatic transaction categorisation
 - **Real-time Updates**: Live transaction updates using Supabase real-time subscriptions
-- **Performance Optimized**: Smart caching and efficient state management for smooth user experience
+- **Performance Optimised**: Smart caching and efficient state management for a smooth user experience
 
 ## Features
 
 ### Core Functionality
 - 📊 **Dashboard Overview**: View your current month's balance, income, and expenses at a glance
 - 💰 **Transaction Management**: Add, edit, and delete transactions with ease
-- 🏷️ **Smart Categorization**: Automatic category suggestions based on transaction descriptions
-- 📅 **Date-based Grouping**: Transactions organized by date with contextual headers (Today, Yesterday, etc.)
+- 🏷️ **Smart Categorisation**: Automatic category suggestions based on transaction descriptions
+- 📅 **Date-based Grouping**: Transactions organised by date with contextual headers (Today, Yesterday, etc.)
 - 🔄 **Recurring Transactions**: Track and manage recurring payments and income
 
 ### User Experience
-- 🌑 **Premium Dark Mode**: Exclusively designed dark theme optimized for reduced eye strain
-- ⚡ **Lightning Fast**: Instant loading with shimmer effects and optimized data fetching
+- 🌑 **Premium Dark Mode**: Exclusively designed dark theme optimised for reduced eye strain
+- ⚡ **Lightning Fast**: Instant loading with shimmer effects and optimised data fetching
 - 🎯 **Smart Filtering**: Filter transactions by type (Credit/Debit), category, and recurring status
 - 📱 **Responsive Design**: Beautiful on all screen sizes with consistent 20px padding throughout
 
@@ -63,14 +63,14 @@ This expense tracker goes beyond simple transaction logging. It features:
 - **Design**: Custom monochromatic design system
 - **Localization**: Indian Rupees (₹) with en_IN formatting
 
-## Getting Started
+## Screenshots
 
-Refer to [CLAUDE.md](./CLAUDE.md) for detailed setup instructions and development guidelines.
+<div style="display: flex; gap: 8px; justify-content: center;">
+  <img src="https://github.com/user-attachments/assets/af8899c1-4e58-406b-a5dc-1b666e6257f5" width="180" alt="Phone Screenshot 1">
+  <img src="https://github.com/user-attachments/assets/3dcbaf76-8847-492f-84a0-a68decf1a4be" width="180" alt="Phone Screenshot 2">
+  <img src="https://github.com/user-attachments/assets/07186e2a-00d3-40a5-8578-6bafee4c2b44" width="180" alt="Phone Screenshot 3">
+  <img src="https://github.com/user-attachments/assets/2b21f653-336f-4289-8ae0-3b12c4bcef68" width="180" alt="Phone Screenshot 4">
+</div>
 
-## Design System
-
-See [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) for comprehensive design documentation and UI guidelines.
-
----
-
-Built with ❤️ using Flutter and Supabase
+<br>
+Built with ❤️ using Cursor Pro
