@@ -46,6 +46,10 @@ This expense tracker goes beyond simple transaction logging. It features:
 - **Architecture**: Clean Architecture with SOLID principles
 - **Design**: Custom monochromatic design system
 
+## MCP Integration
+- Integrated with the FastAPI MCP server, which assists in querying expense-related data using natural language.
+- refer https://github.com/keyurgit45/expense-tracker-mcp
+
 ## Screenshots
 
 <div style="display: flex; gap: 8px; justify-content: center;">
