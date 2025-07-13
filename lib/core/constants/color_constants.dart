@@ -37,6 +37,11 @@ class ColorConstants {
   static const Color negative = Color(0xFF666666); // Expense/negative values
   static const Color positiveSubtle = Color(0xFF2A2A2A); // Positive background
   static const Color negativeSubtle = Color(0xFF1A1A1A); // Negative background
+  
+  // UI elements
+  static const Color primary = Color(0xFFE5E5E5); // Primary action color
+  static const Color error = Color(0xFFCC6666); // Error state - slightly red tinted
+  static const Color divider = Color(0xFF2A2A2A); // Divider lines
 
   // Shadows
   static List<BoxShadow> shadowSmall = [

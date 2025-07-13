@@ -10,6 +10,10 @@ import '../../features/transactions/presentation/pages/transaction_details_wrapp
 import '../../features/categories/presentation/pages/categories_page.dart';
 import '../../features/sms/presentation/pages/sms_transactions_page.dart';
 import '../../features/sms/presentation/bloc/sms_cubit.dart';
+import '../../features/chat/presentation/pages/chat_page.dart';
+import '../../features/chat/presentation/pages/chat_sessions_page.dart';
+import '../../features/chat/presentation/bloc/chat_cubit.dart';
+import '../../features/settings/presentation/pages/settings_page.dart';
 import '../injection.dart';
 
 class AppRouter {
@@ -21,6 +25,9 @@ class AppRouter {
   static const String analytics = '/analytics';
   static const String settings = '/settings';
   static const String sms = '/sms';
+  static const String chat = '/chat';
+  static const String chatSessions = '/chat/sessions';
+  static const String chatDetail = '/chat/:sessionId';
 
   static final router = GoRouter(
     initialLocation: home,
@@ -87,9 +94,7 @@ class AppRouter {
       ),
       GoRoute(
         path: settings,
-        builder: (context, state) => const Scaffold(
-          body: Center(child: Text('Settings')),
-        ),
+        builder: (context, state) => const SettingsPage(),
       ),
       GoRoute(
         path: sms,
@@ -97,6 +102,32 @@ class AppRouter {
           create: (_) => getIt<SmsCubit>(),
           child: const SmsTransactionsPage(),
         ),
+      ),
+      GoRoute(
+        path: chat,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<ChatCubit>(),
+          child: const ChatPage(),
+        ),
+        routes: [
+          GoRoute(
+            path: 'sessions',
+            builder: (context, state) => BlocProvider(
+              create: (_) => getIt<ChatCubit>(),
+              child: const ChatSessionsPage(),
+            ),
+          ),
+          GoRoute(
+            path: ':sessionId',
+            builder: (context, state) {
+              final sessionId = state.pathParameters['sessionId']!;
+              return BlocProvider(
+                create: (_) => getIt<ChatCubit>(),
+                child: ChatPage(sessionId: sessionId),
+              );
+            },
+          ),
+        ],
       ),
     ],
   );

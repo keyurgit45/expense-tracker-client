@@ -24,6 +24,11 @@ class _ExpandableFabState extends State<ExpandableFab>
 
   final List<_FabMenuItem> _menuItems = const [
     _FabMenuItem(
+      icon: Icons.chat,
+      label: 'AI Chat',
+      route: '/chat',
+    ),
+    _FabMenuItem(
       icon: Icons.analytics,
       label: 'Analytics',
       route: '/analytics',
@@ -37,6 +42,11 @@ class _ExpandableFabState extends State<ExpandableFab>
       icon: Icons.sms,
       label: 'SMS',
       route: '/sms',
+    ),
+    _FabMenuItem(
+      icon: Icons.settings,
+      label: 'Settings',
+      route: '/settings',
     ),
   ];
 
@@ -65,6 +75,8 @@ class _ExpandableFabState extends State<ExpandableFab>
   }
 
   void _toggle() {
+    if (!mounted) return;
+    
     setState(() {
       _isExpanded = !_isExpanded;
       if (_isExpanded) {
@@ -72,14 +84,19 @@ class _ExpandableFabState extends State<ExpandableFab>
         _showOverlays();
       } else {
         _animationController.reverse().then((_) {
-          _removeOverlays();
+          if (mounted) {
+            _removeOverlays();
+          }
         });
       }
     });
   }
 
   void _showOverlays() {
-    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    final renderObject = context.findRenderObject();
+    if (renderObject == null || renderObject is! RenderBox) return;
+    
+    final RenderBox renderBox = renderObject;
     final Offset offset = renderBox.localToGlobal(Offset.zero);
 
     // Create backdrop overlay
@@ -132,9 +149,10 @@ class _ExpandableFabState extends State<ExpandableFab>
                         animation: _expandAnimation,
                         builder: (context, child) {
                           final staggerDelay = index * 0.1;
-                          final staggerValue = (_expandAnimation.value - staggerDelay)
-                                  .clamp(0.0, 1.0) /
-                              (1.0 - staggerDelay);
+                          final denominator = 1.0 - staggerDelay;
+                          final staggerValue = denominator > 0 
+                              ? ((_expandAnimation.value - staggerDelay).clamp(0.0, 1.0) / denominator)
+                              : 1.0;
 
                           return Transform.translate(
                             offset: Offset(0, 20 * (1 - staggerValue)),

@@ -25,7 +25,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     context.read<HomeCubit>().loadHomeData();
-    context.read<HomeCubit>().watchTransactions();
+    // TODO: Enable when Supabase Realtime is configured
+    // context.read<HomeCubit>().watchTransactions();
   }
 
   @override
