@@ -13,7 +13,6 @@ This expense tracker goes beyond simple transaction logging. It features:
 - **Clean Architecture**: Following domain-driven design principles for maintainability and scalability
 - **Premium Monochromatic UI**: A carefully crafted dark theme using only shades of grey for a sophisticated, distraction-free experience
 - **Intelligent Categorisation**: ML-ready infrastructure with pgvector support for automatic transaction categorisation
-- **Real-time Updates**: Live transaction updates using Supabase real-time subscriptions
 - **Performance Optimised**: Smart caching and efficient state management for a smooth user experience
 
 ## Features
@@ -23,13 +22,6 @@ This expense tracker goes beyond simple transaction logging. It features:
 - 💰 **Transaction Management**: Add, edit, and delete transactions with ease
 - 🏷️ **Smart Categorisation**: Automatic category suggestions based on transaction descriptions
 - 📅 **Date-based Grouping**: Transactions organised by date with contextual headers (Today, Yesterday, etc.)
-- 🔄 **Recurring Transactions**: Track and manage recurring payments and income
-
-### User Experience
-- 🌑 **Premium Dark Mode**: Exclusively designed dark theme optimised for reduced eye strain
-- ⚡ **Lightning Fast**: Instant loading with shimmer effects and optimised data fetching
-- 🎯 **Smart Filtering**: Filter transactions by type (Credit/Debit), category, and recurring status
-- 📱 **Responsive Design**: Beautiful on all screen sizes with consistent 20px padding throughout
 
 ### Technical Features
 - 🏗️ **Clean Architecture**: Separation of concerns with Domain, Data, and Presentation layers
@@ -46,22 +38,13 @@ This expense tracker goes beyond simple transaction logging. It features:
 - **Visual Hierarchy**: Clear differentiation between income (brighter) and expenses (dimmer)
 - **Progressive Disclosure**: Show essential information first, details on demand
 
-### Upcoming Features
-- 📊 Advanced analytics and spending insights
-- 🎯 Budget tracking and goals
-- 📸 Receipt scanning and attachment
-- 🌍 Multi-currency support
-- 📱 Widgets for quick transaction entry
-- 🔐 Biometric authentication
-
 ## Technology Stack
 
 - **Frontend**: Flutter (Dart)
 - **State Management**: BLoC/Cubit pattern
-- **Backend**: Supabase (PostgreSQL)
+- **Backend**: Supabase (PostgreSQL) + FastAPI
 - **Architecture**: Clean Architecture with SOLID principles
 - **Design**: Custom monochromatic design system
-- **Localization**: Indian Rupees (₹) with en_IN formatting
 
 ## Screenshots
 
