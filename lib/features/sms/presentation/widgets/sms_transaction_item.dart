@@ -7,10 +7,12 @@ import '../../domain/entities/sms_transaction.dart';
 
 class SmsTransactionItem extends StatelessWidget {
   final SmsTransaction transaction;
+  final VoidCallback? onAddToTransactions;
 
   const SmsTransactionItem({
     super.key,
     required this.transaction,
+    this.onAddToTransactions,
   });
 
   @override
@@ -114,16 +116,21 @@ class SmsTransactionItem extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: ColorConstants.surface1,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
         return Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.75,
+          ),
           padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               // Handle bar
               Center(
                 child: Container(
@@ -189,13 +196,53 @@ class SmsTransactionItem extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-            ],
+              // Action button to add to transactions
+              if (transaction.isParsed) ...[
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    if (onAddToTransactions != null) {
+                      onAddToTransactions!();
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      color: ColorConstants.interactive,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.add,
+                          color: ColorConstants.bgPrimary,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Add to Transactions',
+                          style: GoogleFonts.inter(
+                            color: ColorConstants.bgPrimary,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+              ],
+            ),
           ),
         );
       },
     );
   }
-
+  
   Widget _buildDetailRow(String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,

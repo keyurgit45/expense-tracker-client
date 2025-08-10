@@ -31,6 +31,11 @@ class CategoryService {
     );
   }
 
+  /// Get cached categories directly (returns empty list if not cached)
+  List<Category> getCachedCategories() {
+    return _cachedCategories ?? [];
+  }
+
   /// Get category by ID from cache or fetch if needed
   Category? getCategoryById(String id) {
     return _cachedCategories?.firstWhere(

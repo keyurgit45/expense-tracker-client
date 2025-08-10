@@ -41,6 +41,7 @@ class ColorConstants {
   // UI elements
   static const Color primary = Color(0xFFE5E5E5); // Primary action color
   static const Color error = Color(0xFFCC6666); // Error state - slightly red tinted
+  static const Color success = Color(0xFF66CC66); // Success state - slightly green tinted
   static const Color divider = Color(0xFF2A2A2A); // Divider lines
 
   // Shadows

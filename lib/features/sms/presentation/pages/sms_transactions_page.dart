@@ -9,6 +9,7 @@ import '../bloc/sms_cubit.dart';
 import '../bloc/sms_state.dart';
 import '../widgets/sms_transaction_item.dart';
 import '../widgets/sms_filter_chips.dart';
+import 'add_transaction_from_sms_page.dart';
 
 class SmsTransactionsPage extends StatefulWidget {
   const SmsTransactionsPage({super.key});
@@ -246,6 +247,9 @@ class _SmsTransactionsPageState extends State<SmsTransactionsPage> {
                   ...dateTransactions.map((transaction) {
                     return SmsTransactionItem(
                       transaction: transaction,
+                      onAddToTransactions: () {
+                        _navigateToAddTransaction(transaction);
+                      },
                     );
                   }),
                 ],
@@ -297,5 +301,16 @@ class _SmsTransactionsPageState extends State<SmsTransactionsPage> {
     } else {
       return DateFormat('MMM d, yyyy').format(date);
     }
+  }
+
+  void _navigateToAddTransaction(SmsTransaction transaction) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddTransactionFromSmsPage(
+          smsTransaction: transaction,
+        ),
+      ),
+    );
   }
 }

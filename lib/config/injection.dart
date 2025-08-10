@@ -33,6 +33,16 @@ import '../features/transactions/data/repositories/transaction_repository_impl.d
 import '../features/transactions/domain/repositories/transaction_repository.dart';
 import '../features/transactions/presentation/bloc/home_cubit.dart';
 import '../features/transactions/presentation/bloc/transactions_list_cubit.dart';
+import '../features/transactions/presentation/bloc/edit_transaction_cubit.dart';
+import '../features/transactions/domain/usecases/update_transaction.dart';
+import '../features/transactions/domain/usecases/create_transaction.dart';
+import '../features/analytics/data/datasources/analytics_remote_data_source.dart';
+import '../features/analytics/data/repositories/analytics_repository_impl.dart';
+import '../features/analytics/domain/repositories/analytics_repository.dart';
+import '../features/analytics/domain/usecases/get_analytics_summary.dart';
+import '../features/analytics/domain/usecases/get_category_analytics.dart';
+import '../features/analytics/domain/usecases/get_spending_trends.dart';
+import '../features/analytics/presentation/bloc/analytics_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -80,6 +90,9 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton<ChatLocalDataSource>(
     () => ChatLocalDataSourceImpl(sharedPreferences: getIt()),
   );
+  getIt.registerLazySingleton<AnalyticsRemoteDataSource>(
+    () => AnalyticsRemoteDataSourceImpl(supabaseClient: getIt()),
+  );
 
   // Repositories that only depend on data sources
   getIt.registerLazySingleton<CategoryRepository>(
@@ -93,6 +106,9 @@ Future<void> configureDependencies() async {
       remoteDataSource: getIt(),
       localDataSource: getIt(),
     ),
+  );
+  getIt.registerLazySingleton<AnalyticsRepository>(
+    () => AnalyticsRepositoryImpl(remoteDataSource: getIt()),
   );
   
   // Services that depend on repositories
@@ -136,6 +152,21 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton<Logout>(
     () => Logout(getIt()),
   );
+  getIt.registerLazySingleton<GetAnalyticsSummary>(
+    () => GetAnalyticsSummary(getIt()),
+  );
+  getIt.registerLazySingleton<GetCategoryAnalytics>(
+    () => GetCategoryAnalytics(getIt()),
+  );
+  getIt.registerLazySingleton<GetSpendingTrends>(
+    () => GetSpendingTrends(getIt()),
+  );
+  getIt.registerLazySingleton<UpdateTransaction>(
+    () => UpdateTransaction(getIt()),
+  );
+  getIt.registerLazySingleton<CreateTransaction>(
+    () => CreateTransaction(getIt()),
+  );
 
   // Blocs/Cubits
   getIt.registerFactory(
@@ -143,6 +174,9 @@ Future<void> configureDependencies() async {
   );
   getIt.registerFactory(
     () => TransactionsListCubit(getIt(), getIt<CategoryService>()),
+  );
+  getIt.registerFactory(
+    () => EditTransactionCubit(updateTransaction: getIt()),
   );
   getIt.registerFactory(
     () => SmsCubit(repository: getIt()),
@@ -160,6 +194,13 @@ Future<void> configureDependencies() async {
       signUp: getIt(),
       logout: getIt(),
       authRepository: getIt(),
+    ),
+  );
+  getIt.registerFactory(
+    () => AnalyticsCubit(
+      getAnalyticsSummary: getIt(),
+      getCategoryAnalytics: getIt(),
+      getSpendingTrends: getIt(),
     ),
   );
 }

@@ -12,6 +12,10 @@ class TransactionsListCubit extends Cubit<TransactionsListState> {
 
   TransactionsListCubit(this._transactionRepository, this._categoryService) : super(TransactionsListInitial());
 
+  Future<void> refreshTransactions() async {
+    await loadTransactions();
+  }
+
   Future<void> loadTransactions() async {
     emit(TransactionsListLoading());
 

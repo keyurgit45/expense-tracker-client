@@ -42,4 +42,30 @@ class Transaction extends Equatable {
         notes,
         isRecurring,
       ];
+
+  Transaction copyWith({
+    String? id,
+    String? description,
+    double? amount,
+    TransactionType? type,
+    TransactionTag? tag,
+    DateTime? date,
+    String? categoryId,
+    String? categoryName,
+    String? notes,
+    bool? isRecurring,
+  }) {
+    return Transaction(
+      id: id ?? this.id,
+      description: description ?? this.description,
+      amount: amount ?? this.amount,
+      type: type ?? this.type,
+      tag: tag ?? this.tag,
+      date: date ?? this.date,
+      categoryId: categoryId ?? this.categoryId,
+      categoryName: categoryName ?? this.categoryName,
+      notes: notes ?? this.notes,
+      isRecurring: isRecurring ?? this.isRecurring,
+    );
+  }
 }
