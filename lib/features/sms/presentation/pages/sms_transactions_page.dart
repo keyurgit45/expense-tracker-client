@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -9,7 +10,6 @@ import '../bloc/sms_cubit.dart';
 import '../bloc/sms_state.dart';
 import '../widgets/sms_transaction_item.dart';
 import '../widgets/sms_filter_chips.dart';
-import 'add_transaction_from_sms_page.dart';
 
 class SmsTransactionsPage extends StatefulWidget {
   const SmsTransactionsPage({super.key});
@@ -304,13 +304,6 @@ class _SmsTransactionsPageState extends State<SmsTransactionsPage> {
   }
 
   void _navigateToAddTransaction(SmsTransaction transaction) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddTransactionFromSmsPage(
-          smsTransaction: transaction,
-        ),
-      ),
-    );
+    context.push('/sms/add', extra: transaction);
   }
 }

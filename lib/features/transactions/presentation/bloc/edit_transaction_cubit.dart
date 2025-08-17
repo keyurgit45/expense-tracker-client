@@ -14,9 +14,14 @@ class EditTransactionCubit extends Cubit<EditTransactionState> {
   }) : super(EditTransactionInitial());
 
   void initializeWithTransaction(Transaction transaction) {
+    // Store the signed amount based on the transaction type
+    final signedAmount = transaction.type == TransactionType.expense
+        ? -transaction.amount
+        : transaction.amount;
+
     emit(EditTransactionLoaded(
       transaction: transaction,
-      amount: transaction.amount.abs(),
+      amount: signedAmount,
       description: transaction.description,
       categoryId: transaction.categoryId,
       categoryName: transaction.categoryName,
@@ -45,6 +50,7 @@ class EditTransactionCubit extends Cubit<EditTransactionState> {
   void updateCategory(String? categoryId, String? categoryName) {
     if (state is EditTransactionLoaded) {
       final currentState = state as EditTransactionLoaded;
+
       emit(currentState.copyWith(
         categoryId: categoryId,
         categoryName: categoryName,
@@ -62,7 +68,21 @@ class EditTransactionCubit extends Cubit<EditTransactionState> {
   void updateType(TransactionType type) {
     if (state is EditTransactionLoaded) {
       final currentState = state as EditTransactionLoaded;
-      emit(currentState.copyWith(type: type));
+
+      // When changing type, we need to update the amount sign accordingly
+      double newAmount;
+      if (type == TransactionType.expense) {
+        // If changing to expense, make amount negative
+        newAmount = -currentState.amount.abs();
+      } else {
+        // If changing to income, make amount positive
+        newAmount = currentState.amount.abs();
+      }
+
+      emit(currentState.copyWith(
+        type: type,
+        amount: newAmount,
+      ));
     }
   }
 
@@ -94,9 +114,7 @@ class EditTransactionCubit extends Cubit<EditTransactionState> {
 
       try {
         // Create updated transaction with correct sign for amount
-        final updatedAmount = currentState.type == TransactionType.income
-            ? currentState.amount.abs()
-            : -currentState.amount.abs();
+        final updatedAmount = currentState.amount;
 
         final updatedTransaction = currentState.transaction.copyWith(
           amount: updatedAmount,
@@ -116,7 +134,8 @@ class EditTransactionCubit extends Cubit<EditTransactionState> {
 
         result.fold(
           (failure) => emit(EditTransactionError(message: failure.message)),
-          (transaction) => emit(EditTransactionSuccess(transaction: transaction)),
+          (transaction) =>
+              emit(EditTransactionSuccess(transaction: transaction)),
         );
       } catch (e) {
         emit(EditTransactionError(message: 'Failed to update transaction: $e'));

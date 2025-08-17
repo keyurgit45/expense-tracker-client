@@ -53,7 +53,8 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
   }) async {
     try {
       // Build the query dynamically
-      final queryBuilder = _supabaseClient.from('transactions').select('*, categories(name)');
+      final queryBuilder =
+          _supabaseClient.from('transactions').select('*, categories(name)');
       dynamic query = queryBuilder;
 
       if (startDate != null) {
@@ -66,7 +67,7 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
 
       // Apply order
       query = query.order('date', ascending: false);
-      
+
       // Apply range or limit
       if (offset != null && limit != null) {
         query = query.range(offset, offset + limit - 1);
@@ -168,7 +169,8 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
   }
 
   @override
-  Future<TransactionModel> createTransaction(TransactionModel transaction) async {
+  Future<TransactionModel> createTransaction(
+      TransactionModel transaction) async {
     try {
       final response = await _supabaseClient
           .from('transactions')
@@ -183,11 +185,14 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
   }
 
   @override
-  Future<TransactionModel> updateTransaction(TransactionModel transaction) async {
+  Future<TransactionModel> updateTransaction(
+      TransactionModel transaction) async {
     try {
+      final jsonData = transaction.toJson();
+
       final response = await _supabaseClient
           .from('transactions')
-          .update(transaction.toJson())
+          .update(jsonData)
           .eq('transaction_id', transaction.id)
           .select('*, categories(name)')
           .single();
@@ -221,7 +226,8 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
           // Use cached categories instead of making DB calls
           return data.map((transaction) {
             if (transaction['category_id'] != null) {
-              final categoryName = _categoryService.getCategoryName(transaction['category_id']);
+              final categoryName =
+                  _categoryService.getCategoryName(transaction['category_id']);
               transaction['categories'] = {'name': categoryName};
             }
             return TransactionModel.fromJson(transaction);

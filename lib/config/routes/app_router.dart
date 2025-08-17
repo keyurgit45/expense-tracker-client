@@ -14,6 +14,9 @@ import '../../features/chat/presentation/pages/chat_sessions_page.dart';
 import '../../features/chat/presentation/bloc/chat_cubit.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/analytics/presentation/pages/analytics_page.dart';
+import '../../features/sms/presentation/pages/add_transaction_from_sms_page.dart';
+import '../../features/sms/domain/entities/sms_transaction.dart';
+import '../../features/transactions/presentation/bloc/home_cubit.dart';
 import '../injection.dart';
 
 class AppRouter {
@@ -80,6 +83,19 @@ class AppRouter {
           create: (_) => getIt<SmsCubit>(),
           child: const SmsTransactionsPage(),
         ),
+        routes: [
+          GoRoute(
+            path: 'add',
+            builder: (context, state) {
+              final smsTransaction = state.extra as SmsTransaction;
+              return BlocProvider(
+                create: (_) => getIt<HomeCubit>(),
+                child:
+                    AddTransactionFromSmsPage(smsTransaction: smsTransaction),
+              );
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: chat,

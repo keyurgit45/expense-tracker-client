@@ -22,20 +22,24 @@ class TransactionModel {
   });
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
+    final amount = (json['amount'] as num).toDouble();
+
     return TransactionModel(
       id: json['transaction_id'] as String,
       description: json['merchant'] as String? ?? '',
-      amount: (json['amount'] as num).toDouble(),
+      amount: amount,
       date: DateTime.parse(json['date'] as String),
       categoryId: json['category_id'] as String?,
-      categoryName: json['categories'] != null ? json['categories']['name'] as String? : null,
+      categoryName: json['categories'] != null
+          ? json['categories']['name'] as String?
+          : null,
       notes: json['notes'] as String?,
       isRecurring: json['is_recurring'] as bool? ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    final json = {
       'transaction_id': id,
       'merchant': description,
       'amount': amount,
@@ -44,15 +48,17 @@ class TransactionModel {
       'notes': notes,
       'is_recurring': isRecurring,
     };
+
+    return json;
   }
 
   Transaction toEntity() {
     // Determine type based on amount (positive = income, negative = expense)
     final type = amount >= 0 ? TransactionType.income : TransactionType.expense;
-    
+
     // Determine tag based on description or default to other
     final tag = _determineTag(description);
-    
+
     return Transaction(
       id: id,
       description: description,
@@ -68,11 +74,9 @@ class TransactionModel {
   }
 
   factory TransactionModel.fromEntity(Transaction entity) {
-    // Store negative amount for expenses
-    final amount = entity.type == TransactionType.expense 
-        ? -entity.amount 
-        : entity.amount;
-    
+    // The entity amount is already signed (positive for income, negative for expense)
+    final amount = entity.amount;
+
     return TransactionModel(
       id: entity.id,
       description: entity.description,

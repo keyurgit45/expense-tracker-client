@@ -9,10 +9,12 @@ import '../../domain/entities/transaction.dart';
 
 class TransactionDetailsPage extends StatelessWidget {
   final Transaction transaction;
+  final Function(Transaction)? onTransactionUpdated;
 
   const TransactionDetailsPage({
     super.key,
     required this.transaction,
+    this.onTransactionUpdated,
   });
 
   @override
@@ -104,7 +106,7 @@ class TransactionDetailsPage extends StatelessWidget {
 
   Widget _buildHeader() {
     final bool isIncome = transaction.type == TransactionType.income;
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -114,16 +116,15 @@ class TransactionDetailsPage extends StatelessWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: isIncome 
-                  ? ColorConstants.positiveSubtle 
+              color: isIncome
+                  ? ColorConstants.positiveSubtle
                   : ColorConstants.negativeSubtle,
               shape: BoxShape.circle,
             ),
             child: Icon(
               isIncome ? Icons.arrow_downward : Icons.arrow_upward,
-              color: isIncome 
-                  ? ColorConstants.positive 
-                  : ColorConstants.negative,
+              color:
+                  isIncome ? ColorConstants.positive : ColorConstants.negative,
               size: 32,
             ),
           ),
@@ -132,8 +133,8 @@ class TransactionDetailsPage extends StatelessWidget {
           Text(
             '${isIncome ? '+' : '-'}${CurrencyFormatter.format(transaction.amount.abs())}',
             style: GoogleFonts.robotoMono(
-              color: isIncome 
-                  ? ColorConstants.positive 
+              color: isIncome
+                  ? ColorConstants.positive
                   : ColorConstants.textPrimary,
               fontSize: 36,
               fontWeight: FontWeight.w600,
@@ -183,13 +184,16 @@ class TransactionDetailsPage extends StatelessWidget {
             const SizedBox(height: 20),
             _buildDetailRow(
               label: 'Date & Time',
-              value: DateFormat('MMM dd, yyyy • hh:mm a').format(transaction.date),
+              value:
+                  DateFormat('MMM dd, yyyy • hh:mm a').format(transaction.date),
               icon: Icons.calendar_today,
             ),
             _buildDivider(),
             _buildDetailRow(
               label: 'Type',
-              value: transaction.type == TransactionType.income ? 'Income' : 'Expense',
+              value: transaction.type == TransactionType.income
+                  ? 'Income'
+                  : 'Expense',
               icon: Icons.swap_vert,
             ),
             _buildDivider(),
@@ -252,7 +256,9 @@ class TransactionDetailsPage extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
-          crossAxisAlignment: isMultiline ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+          crossAxisAlignment: isMultiline
+              ? CrossAxisAlignment.start
+              : CrossAxisAlignment.center,
           children: [
             Container(
               width: 36,
@@ -283,7 +289,8 @@ class TransactionDetailsPage extends StatelessWidget {
                   const SizedBox(height: 4),
                   if (tagColor != null) ...[
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: tagColor.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(6),
@@ -339,9 +346,15 @@ class TransactionDetailsPage extends StatelessWidget {
       child: _ActionButton(
         label: 'Edit Transaction',
         icon: Icons.edit,
-        onTap: () {
-          // TODO: Navigate to edit transaction
-          context.push('/transactions/edit/${transaction.id}', extra: transaction);
+        onTap: () async {
+          // Navigate to edit transaction and wait for result
+          final result = await context
+              .push('/transactions/edit/${transaction.id}', extra: transaction);
+
+          // If transaction was updated, call the callback
+          if (result != null && result is Transaction) {
+            onTransactionUpdated?.call(result);
+          }
         },
         isPrimary: true,
       ),
@@ -457,12 +470,10 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = isPrimary
-        ? ColorConstants.interactive
-        : ColorConstants.surface2;
-    final foregroundColor = isPrimary
-        ? ColorConstants.bgPrimary
-        : ColorConstants.textPrimary;
+    final backgroundColor =
+        isPrimary ? ColorConstants.interactive : ColorConstants.surface2;
+    final foregroundColor =
+        isPrimary ? ColorConstants.bgPrimary : ColorConstants.textPrimary;
 
     return GestureDetector(
       onTap: onTap,

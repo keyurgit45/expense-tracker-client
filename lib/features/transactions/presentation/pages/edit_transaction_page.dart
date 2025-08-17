@@ -11,7 +11,6 @@ import '../../../categories/domain/entities/category.dart';
 import '../../../categories/domain/services/category_service.dart';
 import '../../domain/entities/transaction.dart';
 import '../bloc/edit_transaction_cubit.dart';
-import '../bloc/transactions_list_cubit.dart';
 
 class EditTransactionPage extends StatefulWidget {
   final Transaction transaction;
@@ -29,16 +28,15 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
   late TextEditingController _amountController;
   late TextEditingController _descriptionController;
   late TextEditingController _notesController;
-  
+
   final CategoryService _categoryService = getIt<CategoryService>();
   List<Category> _categories = [];
 
   @override
   void initState() {
     super.initState();
-    _amountController = TextEditingController(
-      text: widget.transaction.amount.abs().toStringAsFixed(2),
-    );
+    // Initialize with empty text, will be updated when cubit initializes
+    _amountController = TextEditingController();
     _descriptionController = TextEditingController(
       text: widget.transaction.description,
     );
@@ -46,6 +44,16 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
       text: widget.transaction.notes ?? '',
     );
     _loadCategories();
+
+    // Initialize amount controller after the first frame is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final signedAmount = widget.transaction.type == TransactionType.expense
+            ? -widget.transaction.amount
+            : widget.transaction.amount;
+        _amountController.text = signedAmount.abs().toStringAsFixed(2);
+      }
+    });
   }
 
   void _loadCategories() {
@@ -70,9 +78,6 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
       child: BlocConsumer<EditTransactionCubit, EditTransactionState>(
         listener: (context, state) {
           if (state is EditTransactionSuccess) {
-            // Refresh the transactions list
-            context.read<TransactionsListCubit>().refreshTransactions();
-            
             // Show success message
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -84,7 +89,7 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
                 duration: const Duration(seconds: 2),
               ),
             );
-            
+
             // Navigate back
             context.pop(state.transaction);
           } else if (state is EditTransactionError) {
@@ -98,6 +103,13 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
                 duration: const Duration(seconds: 3),
               ),
             );
+          } else if (state is EditTransactionLoaded) {
+            // Update the amount controller when the state changes (e.g., type changes)
+            final currentAmount = state.amount;
+            final controllerText = currentAmount.abs().toStringAsFixed(2);
+            if (_amountController.text != controllerText) {
+              _amountController.text = controllerText;
+            }
           }
         },
         builder: (context, state) {
@@ -140,7 +152,7 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
               ),
             );
           }
-          
+
           return const Scaffold(
             backgroundColor: ColorConstants.bgPrimary,
             body: Center(
@@ -200,7 +212,9 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
             isSelected: state.type == TransactionType.income,
             color: ColorConstants.positive,
             onTap: () {
-              context.read<EditTransactionCubit>().updateType(TransactionType.income);
+              context
+                  .read<EditTransactionCubit>()
+                  .updateType(TransactionType.income);
             },
           ),
         ),
@@ -212,7 +226,9 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
             isSelected: state.type == TransactionType.expense,
             color: ColorConstants.negative,
             onTap: () {
-              context.read<EditTransactionCubit>().updateType(TransactionType.expense);
+              context
+                  .read<EditTransactionCubit>()
+                  .updateType(TransactionType.expense);
             },
           ),
         ),
@@ -279,7 +295,8 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
     );
   }
 
-  Widget _buildDescriptionField(BuildContext context, EditTransactionLoaded state) {
+  Widget _buildDescriptionField(
+      BuildContext context, EditTransactionLoaded state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -325,7 +342,8 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
     );
   }
 
-  Widget _buildCategorySelector(BuildContext context, EditTransactionLoaded state) {
+  Widget _buildCategorySelector(
+      BuildContext context, EditTransactionLoaded state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -467,7 +485,8 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
                 context.read<EditTransactionCubit>().updateTag(tag);
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? ColorConstants.interactive
@@ -498,7 +517,8 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
     );
   }
 
-  Widget _buildRecurringToggle(BuildContext context, EditTransactionLoaded state) {
+  Widget _buildRecurringToggle(
+      BuildContext context, EditTransactionLoaded state) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -583,7 +603,7 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
 
   Widget _buildBottomActions(BuildContext context, EditTransactionState state) {
     final isLoading = state is EditTransactionSaving;
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -677,6 +697,9 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
   }
 
   void _showCategoryPicker(BuildContext context, EditTransactionLoaded state) {
+    // Get the cubit reference before showing the modal
+    final cubit = context.read<EditTransactionCubit>();
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -717,7 +740,7 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
                 itemBuilder: (context, index) {
                   final category = _categories[index];
                   final isSelected = category.id == state.categoryId;
-                  
+
                   return ListTile(
                     leading: Container(
                       width: 40,
@@ -751,10 +774,11 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
                           )
                         : null,
                     onTap: () {
-                      context.read<EditTransactionCubit>().updateCategory(
-                            category.id,
-                            category.name,
-                          );
+                      // Use the cubit reference we got earlier
+                      cubit.updateCategory(
+                        category.id,
+                        category.name,
+                      );
                       Navigator.pop(context);
                     },
                   );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -7,6 +8,7 @@ import 'config/routes/app_router.dart';
 import 'config/supabase_config.dart';
 import 'config/theme/app_theme.dart';
 import 'features/categories/domain/services/category_service.dart';
+import 'features/transactions/presentation/bloc/transactions_list_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,13 +52,16 @@ class ExpenseTrackerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Expenses',
-      theme: AppTheme.darkTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
-      routerConfig: AppRouter.router,
-      debugShowCheckedModeBanner: false,
+    return BlocProvider(
+      create: (_) => getIt<TransactionsListCubit>(),
+      child: MaterialApp.router(
+        title: 'Expenses',
+        theme: AppTheme.darkTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.dark,
+        routerConfig: AppRouter.router,
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }

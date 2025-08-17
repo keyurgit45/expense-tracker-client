@@ -29,8 +29,7 @@ class AddTransactionFromSmsPage extends StatefulWidget {
       _AddTransactionFromSmsPageState();
 }
 
-class _AddTransactionFromSmsPageState
-    extends State<AddTransactionFromSmsPage> {
+class _AddTransactionFromSmsPageState extends State<AddTransactionFromSmsPage> {
   late TextEditingController _amountController;
   late TextEditingController _descriptionController;
   late TextEditingController _notesController;
@@ -49,32 +48,31 @@ class _AddTransactionFromSmsPageState
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize from SMS transaction
     final amount = widget.smsTransaction.amount ?? 0;
     _amountController = TextEditingController(
       text: amount.toStringAsFixed(2),
     );
-    
+
     // Build description from SMS data
     String description = widget.smsTransaction.merchant ?? 'Transaction';
-    if (widget.smsTransaction.paymentMethod != null) {
-      description += ' (${widget.smsTransaction.paymentMethod})';
-    }
+
     _descriptionController = TextEditingController(text: description);
-    
+
     // Add reference as notes if available
     _notesController = TextEditingController(
-      text: widget.smsTransaction.reference ?? '',
+      text: '',
     );
-    
+
     _selectedDate = widget.smsTransaction.date;
-    
+
     // Set transaction type based on SMS type
-    _transactionType = widget.smsTransaction.transactionType == TransactionType.credit
-        ? trans.TransactionType.income
-        : trans.TransactionType.expense;
-    
+    _transactionType =
+        widget.smsTransaction.transactionType == TransactionType.credit
+            ? trans.TransactionType.income
+            : trans.TransactionType.expense;
+
     _loadCategories();
   }
 
@@ -93,14 +91,14 @@ class _AddTransactionFromSmsPageState
 
   void _autoSelectCategory() {
     if (widget.smsTransaction.merchant == null) return;
-    
+
     final merchantLower = widget.smsTransaction.merchant!.toLowerCase();
-    
+
     // Try to match category based on merchant name
     for (final category in _categories) {
       final categoryLower = category.name.toLowerCase();
-      
-      if (merchantLower.contains('food') || 
+
+      if (merchantLower.contains('food') ||
           merchantLower.contains('restaurant') ||
           merchantLower.contains('cafe')) {
         if (categoryLower.contains('food')) {
@@ -108,17 +106,17 @@ class _AddTransactionFromSmsPageState
           _selectedCategoryName = category.name;
           break;
         }
-      } else if (merchantLower.contains('uber') || 
-                 merchantLower.contains('ola') ||
-                 merchantLower.contains('taxi')) {
+      } else if (merchantLower.contains('uber') ||
+          merchantLower.contains('ola') ||
+          merchantLower.contains('taxi')) {
         if (categoryLower.contains('transport')) {
           _selectedCategoryId = category.id;
           _selectedCategoryName = category.name;
           break;
         }
       } else if (merchantLower.contains('amazon') ||
-                 merchantLower.contains('flipkart') ||
-                 merchantLower.contains('myntra')) {
+          merchantLower.contains('flipkart') ||
+          merchantLower.contains('myntra')) {
         if (categoryLower.contains('shopping')) {
           _selectedCategoryId = category.id;
           _selectedCategoryName = category.name;
@@ -199,7 +197,7 @@ class _AddTransactionFromSmsPageState
           if (context.mounted) {
             context.read<HomeCubit>().loadHomeData();
             context.read<TransactionsListCubit>().refreshTransactions();
-            
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
@@ -210,7 +208,7 @@ class _AddTransactionFromSmsPageState
                 duration: const Duration(seconds: 2),
               ),
             );
-            
+
             // Navigate back
             context.pop(true);
           }
@@ -646,7 +644,8 @@ class _AddTransactionFromSmsPageState
                 });
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? ColorConstants.interactive
@@ -875,7 +874,7 @@ class _AddTransactionFromSmsPageState
                 itemBuilder: (context, index) {
                   final category = _categories[index];
                   final isSelected = category.id == _selectedCategoryId;
-                  
+
                   return ListTile(
                     leading: Container(
                       width: 40,

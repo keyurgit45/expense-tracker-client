@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../config/injection.dart';
 import '../../../../core/constants/color_constants.dart';
+import '../../domain/entities/transaction.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import 'transaction_details_page.dart';
 
-class TransactionDetailsWrapper extends StatelessWidget {
+class TransactionDetailsWrapper extends StatefulWidget {
   final String transactionId;
 
   const TransactionDetailsWrapper({
@@ -14,9 +15,18 @@ class TransactionDetailsWrapper extends StatelessWidget {
   });
 
   @override
+  State<TransactionDetailsWrapper> createState() =>
+      _TransactionDetailsWrapperState();
+}
+
+class _TransactionDetailsWrapperState extends State<TransactionDetailsWrapper> {
+  Transaction? _currentTransaction;
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: getIt<TransactionRepository>().getTransactionById(transactionId),
+      future: getIt<TransactionRepository>()
+          .getTransactionById(widget.transactionId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
@@ -32,7 +42,7 @@ class TransactionDetailsWrapper extends StatelessWidget {
         if (snapshot.hasError || !snapshot.hasData) {
           final result = snapshot.data;
           String errorMessage = 'Transaction not found';
-          
+
           if (result != null) {
             result.fold(
               (failure) => errorMessage = failure.message,
@@ -141,7 +151,21 @@ class TransactionDetailsWrapper extends StatelessWidget {
               ),
             ),
           ),
-          (transaction) => TransactionDetailsPage(transaction: transaction),
+          (transaction) {
+            // Update current transaction if it's different
+            if (_currentTransaction?.id != transaction.id) {
+              _currentTransaction = transaction;
+            }
+
+            return TransactionDetailsPage(
+              transaction: _currentTransaction!,
+              onTransactionUpdated: (updatedTransaction) {
+                setState(() {
+                  _currentTransaction = updatedTransaction;
+                });
+              },
+            );
+          },
         );
       },
     );
